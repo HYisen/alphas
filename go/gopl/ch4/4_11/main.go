@@ -55,7 +55,13 @@ func findIssueById(array []github.Issue, target int32) (github.Issue, bool) {
 }
 
 func Retrieve() ([]github.Issue, error) {
-	resp, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/vnd.github.v3+json")
+	resp, err := http.DefaultClient.Do(req)
+
 	if err != nil {
 		return nil, err
 	}
