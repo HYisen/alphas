@@ -9,7 +9,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strings"
 )
 
 var path = flag.String("path", "", "whose issues is going to be managed")
@@ -48,6 +47,19 @@ func main() {
 		issue := GenNeoIssue()
 		fmt.Println(issue)
 		Create(issue)
+	case "update":
+		issues, err := Retrieve()
+		if err != nil {
+			log.Panic(err)
+		}
+
+		issue, ok := findIssueById(issues, int32(*number))
+		if !ok {
+			log.Panicf("can not found issue #%d", *number)
+		}
+
+		neo := ModOldIssue(issue)
+		Update(neo)
 	default:
 		flag.PrintDefaults()
 	}
@@ -63,7 +75,7 @@ func findIssueById(array []github.Issue, target int32) (github.Issue, bool) {
 }
 
 func Retrieve() ([]github.Issue, error) {
-	resp, err := fetch("GET", nil)
+	resp, err := fetch(url, "GET", nil)
 
 	if err != nil {
 		return nil, err
@@ -84,15 +96,24 @@ func Retrieve() ([]github.Issue, error) {
 	return issues, nil
 }
 
-func GenNeoIssue() github.NeoIssue {
-	const msg = `
+const msg = `
 # Please enter the issue title and body, which shall be separated by
 # the first empty line, without which means an issue has no body but
 # only title. Lines starting with '#' will be ignored, and an empty
 # message aborts the commit.
 #`
 
+func GenNeoIssue() github.NeoIssue {
 	input := utility.GetInputFromTextEditor("echo", msg)
+	return genNeoIssue(input)
+}
+
+func ModOldIssue(old github.Issue) github.NeoIssue {
+	input := utility.GetInputFromTextEditor("mod", old.Title+"\n\n"+old.Body+"\n"+msg)
+	return genNeoIssue(input)
+}
+
+func genNeoIssue(input string) github.NeoIssue {
 	// Null or blank body are identical to GitHub web issue detail page.
 	// Therefore the distinguish there are just for fun
 	title, body, isBodyExist := utility.ExtractTitleAndBody(input)
@@ -108,7 +129,7 @@ func GenNeoIssue() github.NeoIssue {
 	return neo
 }
 
-func fetch(method string, payload io.Reader) (resp *http.Response, err error) {
+func fetch(url string, method string, payload io.Reader) (resp *http.Response, err error) {
 	req, err := http.NewRequest(method, url, payload)
 	if err != nil {
 		return nil, err
@@ -121,16 +142,23 @@ func fetch(method string, payload io.Reader) (resp *http.Response, err error) {
 }
 
 func Create(neoIssue github.NeoIssue) {
-	var sb strings.Builder
-	if err := json.NewEncoder(&sb).Encode(neoIssue); err != nil {
-		log.Fatal(err)
-	}
-
-	resp, err := fetch("POST", strings.NewReader(sb.String()))
+	resp, err := fetch(url, "POST", neoIssue.JSONReader())
 	if err != nil {
 		log.Fatal(err)
 	}
 	if resp.StatusCode != 201 {
+		log.Fatalf("bad return http status %v", resp.Status)
+	}
+	fmt.Println(resp.Body)
+	_ = resp.Body.Close()
+}
+
+func Update(neoIssue github.NeoIssue) {
+	resp, err := fetch(fmt.Sprintf("%s/%d", url, *number), "PATCH", neoIssue.JSONReader())
+	if err != nil {
+		log.Fatal(err)
+	}
+	if resp.StatusCode != 200 {
 		log.Fatalf("bad return http status %v", resp.Status)
 	}
 	fmt.Println(resp.Body)

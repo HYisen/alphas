@@ -1,6 +1,11 @@
 package github
 
-import "time"
+import (
+	"encoding/json"
+	"log"
+	"strings"
+	"time"
+)
 
 type User struct {
 	Id      int64
@@ -24,4 +29,14 @@ type NeoIssue struct {
 	Milestone *int32   `json:"milestone,omitempty"`
 	Labels    []string `json:"labels,omitempty"`
 	Assignees []string `json:"assignees,omitempty"`
+}
+
+func (i *NeoIssue) JSONReader() *strings.Reader {
+	var sb strings.Builder
+	if err := json.NewEncoder(&sb).Encode(i); err != nil {
+		log.Fatal(err)
+	}
+
+	reader := strings.NewReader(sb.String())
+	return reader
 }
