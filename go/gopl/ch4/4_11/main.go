@@ -93,6 +93,8 @@ func GenNeoIssue() github.NeoIssue {
 #`
 
 	input := utility.GetInputFromTextEditor("echo", msg)
+	// Null or blank body are identical to GitHub web issue detail page.
+	// Therefore the distinguish there are just for fun
 	title, body, isBodyExist := utility.ExtractTitleAndBody(input)
 
 	neo := github.NeoIssue{
