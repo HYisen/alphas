@@ -17,3 +17,11 @@ type Issue struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	User      *User
 }
+
+type NeoIssue struct {
+	Title     string   `json:"title"`
+	Body      *string  `json:"body,omitempty"`
+	Milestone *int32   `json:"milestone,omitempty"`
+	Labels    []string `json:"labels,omitempty"`
+	Assignees []string `json:"assignees,omitempty"`
+}

@@ -2,16 +2,20 @@ package main
 
 import (
 	"alpha/go/gopl/ch4/4_11/github"
+	"alpha/go/gopl/ch4/4_11/utility"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var path = flag.String("path", "", "whose issues is going to be managed")
 var method = flag.String("method", "", "action on issues : create/read/update/delete")
 var number = flag.Int("number", -1, "detail issue number to be handled")
+var token = flag.String("token", "", "GitHub Access Token for privileges")
 
 var url string
 
@@ -40,6 +44,10 @@ func main() {
 				log.Panicf("can not found issue #%d", *number)
 			}
 		}
+	case "create":
+		issue := GenNeoIssue()
+		fmt.Println(issue)
+		Create(issue)
 	default:
 		flag.PrintDefaults()
 	}
@@ -55,12 +63,7 @@ func findIssueById(array []github.Issue, target int32) (github.Issue, bool) {
 }
 
 func Retrieve() ([]github.Issue, error) {
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Accept", "application/vnd.github.v3+json")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := fetch("GET", nil)
 
 	if err != nil {
 		return nil, err
@@ -79,4 +82,55 @@ func Retrieve() ([]github.Issue, error) {
 
 	_ = resp.Body.Close()
 	return issues, nil
+}
+
+func GenNeoIssue() github.NeoIssue {
+	const msg = `
+# Please enter the issue title and body, which shall be separated by
+# the first empty line, without which means an issue has no body but
+# only title. Lines starting with '#' will be ignored, and an empty
+# message aborts the commit.
+#`
+
+	input := utility.GetInputFromTextEditor("echo", msg)
+	title, body, isBodyExist := utility.ExtractTitleAndBody(input)
+
+	neo := github.NeoIssue{
+		Title: title,
+	}
+	fmt.Println(isBodyExist)
+	if isBodyExist {
+		neo.Body = &body
+	}
+
+	return neo
+}
+
+func fetch(method string, payload io.Reader) (resp *http.Response, err error) {
+	req, err := http.NewRequest(method, url, payload)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/vnd.github.v3+json")
+	if len(*token) != 0 {
+		req.Header.Add("Authorization", " token "+*token)
+	}
+	return http.DefaultClient.Do(req)
+}
+
+func Create(neoIssue github.NeoIssue) {
+	var sb strings.Builder
+	if err := json.NewEncoder(&sb).Encode(neoIssue); err != nil {
+		log.Fatal(err)
+	}
+
+	resp, err := fetch("POST", strings.NewReader(sb.String()))
+	if err != nil {
+		log.Fatal(err)
+	}
+	if resp.StatusCode != 201 {
+		log.Fatalf("bad return http status %v", resp.Status)
+	}
+	fmt.Println(resp.Body)
+	_ = resp.Body.Close()
 }
