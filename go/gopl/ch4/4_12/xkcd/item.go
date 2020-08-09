@@ -1,6 +1,7 @@
 package xkcd
 
 import (
+	"alpha/go/gopl/utility"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -27,6 +28,7 @@ func Access(num int32) (*Item, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer utility.CloseAndLogError(resp.Body)
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("bad response status %v", resp.Status)
 	}
