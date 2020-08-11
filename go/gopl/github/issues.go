@@ -14,6 +14,8 @@ type User struct {
 }
 
 type Issue struct {
+	HTMLURL   string `json:"html_url"`
+	State     string `json:"state"`
 	Id        int64
 	Number    int32
 	Title     string
