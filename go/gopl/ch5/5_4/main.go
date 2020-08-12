@@ -29,13 +29,6 @@ func visit(node *html.Node) {
 		dealAttr(node, "a", "href")
 		dealAttr(node, "img", "src")
 		currentBlockName = node.Data
-		if node.Data == "img" {
-			for _, attr := range node.Attr {
-				if attr.Key == "src" {
-					add("img", attr.Val)
-				}
-			}
-		}
 	} else if node.Type == html.TextNode {
 		if currentBlockName == "script" {
 			add("script", node.Data)
