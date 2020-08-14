@@ -1,7 +1,7 @@
 package xkcd
 
 import (
-	"alpha/go/gopl/utility"
+	"alphas/go/gopl/utility"
 	"encoding/json"
 	"fmt"
 	"net/http"

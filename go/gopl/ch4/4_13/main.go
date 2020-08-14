@@ -1,7 +1,7 @@
 package main
 
 import (
-	"alpha/go/gopl/utility"
+	"alphas/go/gopl/utility"
 	"encoding/json"
 	"flag"
 	"fmt"

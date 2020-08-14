@@ -1,8 +1,8 @@
 package main
 
 import (
-	"alpha/go/gopl/ch2/2_1/tempconv"
-	"alpha/go/gopl/ch2/2_2/distconv"
+	"alphas/go/gopl/ch2/2_1/tempconv"
+	"alphas/go/gopl/ch2/2_2/distconv"
 	"bufio"
 	"fmt"
 	"os"

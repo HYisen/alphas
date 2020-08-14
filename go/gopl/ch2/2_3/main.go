@@ -28,7 +28,7 @@ func PopCount0(x uint64) int {
 func PopCount1(x uint64) int {
 	cnt := 0
 	for i := 0; i < 8; i++ {
-		cnt += int(pc[byte(x>>(i*8))])
+		cnt += int(pc[byte(x>>uint(i*8))])
 	}
 	return cnt
 }
@@ -36,7 +36,7 @@ func PopCount1(x uint64) int {
 func PopCount2(x uint64) int {
 	cnt := 0
 	for i := 0; i < 64; i++ {
-		if (x>>i)&1 == 1 {
+		if (x>>uint(i))&1 == 1 {
 			cnt += 1
 		}
 	}

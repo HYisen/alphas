@@ -1,8 +1,8 @@
 package elasticsearch
 
 import (
-	"alpha/go/gopl/ch4/4_12/xkcd"
-	"alpha/go/gopl/utility"
+	"alphas/go/gopl/ch4/4_12/xkcd"
+	"alphas/go/gopl/utility"
 	"encoding/json"
 	"fmt"
 	"net/http"

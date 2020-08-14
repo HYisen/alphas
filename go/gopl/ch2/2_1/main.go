@@ -1,7 +1,7 @@
 package main
 
 import (
-	"alpha/go/gopl/ch2/2_1/tempconv"
+	"alphas/go/gopl/ch2/2_1/tempconv"
 	"fmt"
 )
 

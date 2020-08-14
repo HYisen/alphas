@@ -1,8 +1,8 @@
 package main
 
 import (
-	"alpha/go/gopl/ch4/4_12/elasticsearch"
-	"alpha/go/gopl/ch4/4_12/xkcd"
+	"alphas/go/gopl/ch4/4_12/elasticsearch"
+	"alphas/go/gopl/ch4/4_12/xkcd"
 	"flag"
 	"fmt"
 	"log"

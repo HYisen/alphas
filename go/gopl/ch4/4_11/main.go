@@ -1,8 +1,8 @@
 package main
 
 import (
-	"alpha/go/gopl/ch4/4_11/utility"
-	"alpha/go/gopl/github"
+	"alphas/go/gopl/ch4/4_11/utility"
+	"alphas/go/gopl/github"
 	"encoding/json"
 	"flag"
 	"fmt"
