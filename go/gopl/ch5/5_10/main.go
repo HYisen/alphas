@@ -7,7 +7,7 @@
 package main
 
 import (
-	"alpha/go/gopl/utility"
+	"alphas/go/gopl/utility"
 	"fmt"
 )
 
