@@ -1,6 +1,7 @@
 package main
 
 import (
+	"alphas/go/gopl/utility"
 	"fmt"
 	"strings"
 )
@@ -82,6 +83,45 @@ func (s *IntSet) AddAll(x ...int) {
 	}
 }
 
+func (s *IntSet) IntersectWith(t *IntSet) {
+	for i := range s.words {
+		if i >= len(t.words) {
+			break
+		}
+		s.words[i] &= t.words[i]
+	}
+	for i, tWord := range t.words {
+		if i < len(s.words) {
+			s.words[i] |= tWord
+		} else {
+			s.words = append(s.words, tWord)
+		}
+	}
+}
+
+func (s *IntSet) DifferenceWith(t *IntSet) {
+	tmp := s.Copy()
+	tmp.SymmetricDifferenceWith(t)
+	for i := range s.words {
+		s.words[i] &= tmp.words[i]
+	}
+}
+
+func (s *IntSet) SymmetricDifferenceWith(t *IntSet) {
+	// for equivalent range word
+	min, max := utility.MinAndMax(len(s.words), len(t.words))
+	for i := 0; i < min; i++ {
+		s.words[i] ^= t.words[i]
+	}
+
+	// for larger t word
+	if len(s.words) < len(t.words) {
+		for i := min; i < max; i++ {
+			s.words = append(s.words, t.words[i])
+		}
+	}
+}
+
 func main() {
 	var a IntSet
 
@@ -114,4 +154,17 @@ func main() {
 	fmt.Println("AddAll")
 	a.AddAll(1, 2, 3, 4)
 	fmt.Println(a.String())
+
+	var one, two IntSet
+	one.AddAll(1, 2, 3)
+	two.AddAll(2, 3, 4)
+	tmpA, tmpB := one.Copy(), two.Copy()
+	tmpA.DifferenceWith(&two)
+	tmpB.DifferenceWith(&one)
+	fmt.Printf("Diff %v,%v\n", tmpA, tmpB)
+	tmpA, tmpB = one.Copy(), two.Copy()
+	tmpA.SymmetricDifferenceWith(&two)
+	tmpB.SymmetricDifferenceWith(&one)
+	fmt.Printf("SymDiff %v,%v\n", tmpA, tmpB)
+
 }
