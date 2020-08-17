@@ -76,6 +76,12 @@ func (s *IntSet) Copy() *IntSet {
 	return &neo
 }
 
+func (s *IntSet) AddAll(x ...int) {
+	for _, one := range x {
+		s.Add(one)
+	}
+}
+
 func main() {
 	var a IntSet
 
@@ -104,4 +110,8 @@ func main() {
 	fmt.Println(&a)
 	fmt.Println(a.Len())
 	fmt.Println(pb)
+
+	fmt.Println("AddAll")
+	a.AddAll(1, 2, 3, 4)
+	fmt.Println(a.String())
 }
