@@ -9,7 +9,7 @@ import (
 const bitSize = 16
 
 type IntSet struct {
-	words []uint64
+	words []uint
 }
 
 func (s *IntSet) Has(x int) bool {
@@ -67,7 +67,7 @@ func (s *IntSet) Remove(x int) {
 }
 
 func (s *IntSet) Clear() {
-	s.words = []uint64{}
+	s.words = []uint{}
 }
 
 func (s *IntSet) Copy() *IntSet {
