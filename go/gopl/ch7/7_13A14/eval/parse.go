@@ -52,6 +52,7 @@ func precedence(op rune) int {
 //
 //   expr = num                         a literal number, e.g., 3.14159
 //        | id                          a variable name, e.g., x
+//        | min                         use min type
 //        | id '(' expr ',' ... ')'     a function call
 //        | '-' expr                    a unary operator (+-)
 //        | expr '+' expr               a binary operator (+-*/)
@@ -135,6 +136,9 @@ func parsePrimary(lex *lexer) Expr {
 			}
 		}
 		lex.next() // consume ')'
+		if id == "min" {
+			return min{args}
+		}
 		return call{id, args}
 
 	case scanner.Int, scanner.Float:

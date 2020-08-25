@@ -97,3 +97,25 @@ func (c call) Eval(env Env) float64 {
 }
 
 type Env map[Var]float64
+
+type min struct {
+	args []Expr
+}
+
+func (m min) Eval(env Env) float64 {
+	if len(m.args) == 0 {
+		panic("empty min func input")
+	}
+	ret := m.args[0].Eval(env)
+	for i := 1; i < len(m.args); i++ {
+		neo := m.args[i].Eval(env)
+		if neo < ret {
+			ret = neo
+		}
+	}
+	return ret
+}
+
+func (m min) String() string {
+	return fmt.Sprintf("min[%v]", m.args)
+}
