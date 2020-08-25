@@ -1,8 +1,10 @@
 package eval
 
 import (
+	"alphas/go/gopl/utility"
 	"fmt"
 	"math"
+	"strconv"
 )
 
 type Expr interface {
@@ -13,7 +15,7 @@ type Expr interface {
 type Var string
 
 func (v Var) Eval(env Env) float64 {
-	return env[v]
+	return env.Get(v)
 }
 
 func (v Var) String() string {
@@ -97,6 +99,19 @@ func (c call) Eval(env Env) float64 {
 }
 
 type Env map[Var]float64
+
+func (e Env) Get(key Var) float64 {
+	val, ok := e[key]
+	if ok {
+		return val
+	}
+	val, err := strconv.ParseFloat(utility.RequireInput(string(key)+"="), 64)
+	if err != nil {
+		panic(err)
+	}
+	e[key] = val
+	return val
+}
 
 type min struct {
 	args []Expr
