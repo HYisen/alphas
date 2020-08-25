@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"strconv"
@@ -19,6 +20,37 @@ func (db database) list(w http.ResponseWriter, _ *http.Request) {
 	for item, price := range db {
 		_, _ = fmt.Fprintf(w, "%s: %s\n", item, price)
 	}
+}
+
+var tmpl = template.Must(template.New("list").Parse(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <tr style='text-align: left'>
+        <th>
+            Item
+        </th>
+        <th>
+            Price
+        </th>
+    </tr>
+    {{range $item,$price:=.}}
+        <tr>
+            <td>{{$item}}</td>
+            <td>{{$price}}</td>
+        </tr>
+    {{end}}
+</table>
+
+</body>
+</html>`))
+
+func (db database) web(w http.ResponseWriter, _ *http.Request) {
+	_ = tmpl.Execute(w, db)
 }
 
 func (db database) price(w http.ResponseWriter, req *http.Request) {
@@ -57,6 +89,7 @@ func (db database) remove(w http.ResponseWriter, req *http.Request) {
 func main() {
 	db := database{"shows": 50, "socks": 5}
 	http.HandleFunc("/list", db.list)
+	http.HandleFunc("/list.html", db.web)
 	http.HandleFunc("/price", db.price)
 	http.HandleFunc("/create", db.put)
 	http.HandleFunc("/delete", db.remove)
