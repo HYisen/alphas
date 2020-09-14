@@ -18,7 +18,7 @@ func TestRoute(t *testing.T) {
 	nSet.Remove(2)
 
 	oSet[14] = true
-	if !nSet.Has(2) {
+	if nSet.Has(2) {
 		t.Error("remove")
 	}
 }
