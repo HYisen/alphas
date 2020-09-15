@@ -48,7 +48,7 @@ func TestEquality(t *testing.T) {
 			default:
 				oldStr := fmt.Sprintf("%v", old)
 				neo := old
-				err := json.Unmarshal([]byte(ref), &neo)
+				err := json.Unmarshal([]byte(tst), &neo)
 				if err != nil {
 					panic(err)
 				}
